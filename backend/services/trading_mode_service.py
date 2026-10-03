@@ -171,12 +171,13 @@ async def dispatch_by_mode(
 ) -> T:
     """Call ``live_fn`` or ``sandbox_fn`` based on the current trading mode.
 
-    While Phase 2 (the sandbox engine) is not yet implemented, passing
-    ``sandbox_fn=None`` is accepted — in sandbox mode the helper falls back
-    to ``live_fn`` so the app stays functional. Once the sandbox services
-    exist, every order service will pass both.
+    Sandbox mode requires a sandbox callback. If ``sandbox_fn`` is ``None``,
+    raise ``ValueError`` without invoking the live callback. Live mode still
+    accepts ``sandbox_fn=None``. Arguments and callback results are forwarded.
     """
     mode = await get_trading_mode()
-    if mode == TRADING_MODE_SANDBOX and sandbox_fn is not None:
+    if mode == TRADING_MODE_SANDBOX:
+        if sandbox_fn is None:
+            raise ValueError("Sandbox mode requires a sandbox callback")
         return await sandbox_fn(*args, **kwargs)
     return await live_fn(*args, **kwargs)
