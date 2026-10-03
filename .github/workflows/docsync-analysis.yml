@@ -1,0 +1,25 @@
+name: DocSync code change
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      before_sha:
+        description: Full before SHA of an existing failed analysis (not a new code change)
+        required: true
+      after_sha:
+        description: Full after SHA of that same failed analysis
+        required: true
+permissions:
+  contents: read
+jobs:
+  analyze:
+    uses: DebuG6290/ai-docsync/.github/workflows/docsync-analysis.yml@b85b568259ab2c6316049883c4940df4185e7d11
+    with:
+      # Workflow and application are pinned to the same reviewed multi-repository release.
+      application_ref: b85b568259ab2c6316049883c4940df4185e7d11
+      monitored_branch: "main"
+      retry: ${{ github.event_name == 'workflow_dispatch' || github.run_attempt > 1 }}
+    secrets:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
