@@ -1,0 +1,25 @@
+name: DocSync index
+on:
+  pull_request:
+    types: [closed]
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      baseline_sha:
+        description: Explicit approved baseline SHA (only before the first index)
+        required: true
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  index:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    uses: DebuG6290/ai-docsync/.github/workflows/docsync-index.yml@b85b568259ab2c6316049883c4940df4185e7d11
+    with:
+      # Workflow and application are pinned to the same reviewed multi-repository release.
+      application_ref: b85b568259ab2c6316049883c4940df4185e7d11
+      monitored_branch: "main"
+      baseline_sha: ${{ inputs.baseline_sha || '' }}
+      retry: ${{ github.run_attempt > 1 }}
+    secrets:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
