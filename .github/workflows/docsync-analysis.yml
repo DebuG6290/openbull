@@ -14,10 +14,10 @@ permissions:
   contents: read
 jobs:
   analyze:
-    uses: DebuG6290/ai-docsync/.github/workflows/docsync-analysis.yml@3c95320159b06dd6d802f8ae346785cb7c778a48
+    uses: DebuG6290/ai-docsync/.github/workflows/docsync-analysis.yml@5d0cc3462402cde6e76c03942bd5c6e9d154a63c
     with:
       # Workflow and application are pinned to the same reviewed multi-repository release.
-      application_ref: 3c95320159b06dd6d802f8ae346785cb7c778a48
+      application_ref: 5d0cc3462402cde6e76c03942bd5c6e9d154a63c
       monitored_branch: "main"
       retry: ${{ github.event_name == 'workflow_dispatch' || github.run_attempt > 1 }}
     secrets:
